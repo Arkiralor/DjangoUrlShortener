@@ -1,0 +1,24 @@
+autopep8==1.5.7                                 ## Used for auto-formating python code (ctrl+K, ctrl+F, in VS Code)
+coverage                                        ## List out required tests for backend.
+boto3==1.17.109                                 ## Used to connect to AWS S3 instances.
+dataclasses                                     ## Boilerplate classes to hold data.
+django==3.2.6                                   ## Core Web framework.
+django-cors-headers==3.7.0                      ## Package to handle Cross-Origin requests.
+django-dotenv==1.4.2                            ## Used to read Environment Varible for the core web framework.
+django-extensions==3.2.1                        ## Extend functionality and utility of core web framework.
+django-storages                                 ## Extension to allow django to use cloud storages.
+djangorestframework==3.12.4                     ## REST API functionality for core web framework.
+djangorestframework-simplejwt==5.2.0            ## Provide JWT functionality to core web framework.
+graphviz==0.20.1                                ## Used for graph representation of data in vector and mark-down/up format.
+Faker==8.1.3                                    ## Used to create dummy data.
+jupyter==1.0.0                                  ## Used for prototyping scripts.
+pandas==1.2.3                                   ## Datascience/Statistics/Dataengineering applications.
+pdfkit                                          ## Used to do operations on PDFs.
+pillow                                          ## Media Files
+psycopg2-binary==2.8.6                          ## Used to connect the web-application to a PostgreSQL database.
+pydot==1.4.2                                    ## Used to manipulate .DOT files inside the environment.
+pydot-ng==2.0.0                                 ## Extension for 'PyDOT'
+pycryptodome                                    ## Used to synchronously encrypt/decrypt data.
+requests==2.28.1                                ## Used to hit external APIs.
+# PyJWT==1.7.1                                    ## Alternative library for JWT functionality.
+# xhtml2pdf==0.2.7                                ## Used to convert rendered HTML pages to PDF documents.
