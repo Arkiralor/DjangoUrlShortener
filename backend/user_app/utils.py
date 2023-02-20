@@ -11,7 +11,8 @@ from django.utils import timezone
 
 from core.boilerplate.template_responses import Resp
 from user_app.constants import UserRegex
-from user_app.models import User
+from user_app.helpers import OTPHelper
+from user_app.models import User, UserOTP
 from user_app.serializers import UserOutputSerializer, UserRegisterSerializer, UserOTPSerializer, UserPasswordResetTokenSerializer
 
 from user_app import logger
@@ -209,3 +210,23 @@ class UserModelUtils:
         logger.info(f"User {user.email} logged in at {resp.data.get('login')} via password.")
 
         return resp
+
+    @classmethod
+    def login_via_otp_init(cls, phone:str=None, isd:str=None, *args, **kwargs)->Resp:
+        resp = Resp()
+
+        if not phone or not isd:
+            resp.error = "Inavlid data"
+            resp.message = "Phone number and ISD number are both required."
+            resp.data = {
+                "phone": phone,
+                "isd": isd
+            }
+            resp.status_code = status.HTTP_400_BAD_REQUEST
+            return resp
+
+        pass
+
+    @classmethod
+    def login_via_otp_confirm(cls, txn_id:str=None, otp:str=None, *args, **kwargs)->Resp:
+        pass

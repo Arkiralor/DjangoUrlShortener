@@ -121,7 +121,7 @@ class User(AbstractUser):
             models.Index(fields=('id',)),
             models.Index(fields=('username',)),
             models.Index(fields=('email',)),
-            models.Index(fields=('user_phone_primary',)),
+            models.Index(fields=('phone',)),
             models.Index(fields=('user_slug',)),
             models.Index(fields=('first_name', 'last_name')),
         )

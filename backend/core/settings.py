@@ -149,9 +149,9 @@ USE_TZ = eval(environ['USE_TZ'])
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = path.join(BASE_DIR, 'mediafiles')
+MEDIA_ROOT = path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = (
     path.join(BASE_DIR, 'staticfiles'),
