@@ -16,5 +16,6 @@ THIRD_PARTY_APPS = [
     'rest_framework_simplejwt.token_blacklist'
 ]
 CUSTOM_APPS = [
-    'user_app.apps.UserAppConfig'
+    'user_app.apps.UserAppConfig',
+    'url_app.apps.UrlAppConfig'
 ]

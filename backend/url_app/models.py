@@ -22,6 +22,5 @@ class ShortenedURL(TemplateModel):
         ordering = ("-created",)
         indexes = (
             models.Index(fields=('id',)),
-            models.Index(fields=('assigned_users',))
         )
 

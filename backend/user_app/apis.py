@@ -9,9 +9,30 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from user_app.utils import UserModelUtils
 
 class UserRegisterView(APIView):
+    permission_classes = (AllowAny,)
 
     def post(self, request:Request, *args, **kwargs):
         user, resp = UserModelUtils.register_new_user(data=request.data)
+
+        return Response(
+            {
+                "error": resp.error,
+                "message": resp.message,
+                "data": resp.data
+            },
+            status=resp.status_code
+        )
+
+class UserPasswordLoginAPI(APIView):
+
+    permission_classes = (AllowAny,)
+
+    def post(self, request:Request, *args, **kwargs):
+        username = request.data.get("username", None)
+        email = request.data.get("email", None)
+        password = request.data.get("password", None)
+
+        resp = UserModelUtils.login_via_password(username=username, email=email, password=password)
 
         return Response(
             {
