@@ -1,3 +1,4 @@
+from os import environ
 from django.db import models
 from django.utils import timezone
 
@@ -6,7 +7,8 @@ from user_app.models import User
 
 class ShortenedURL(TemplateModel):
     long_url = models.TextField()
-    assigned_users = models.ManyToManyField(User, symmetrical=True)
+    short_url = models.TextField(blank=True, null=True)
+    assigned_user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     expiry = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -15,6 +17,9 @@ class ShortenedURL(TemplateModel):
     def save(self, *args, **kwargs):
         if not self.expiry:
             self.expiry = timezone.now() + timezone.timedelta(minutes=360)
+        
+        self.short_url = f"{environ.get('APP_NAME')}/{self.id}"
+        super(ShortenedURL, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Shortened URL"

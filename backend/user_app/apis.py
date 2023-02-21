@@ -14,14 +14,7 @@ class UserRegisterView(APIView):
     def post(self, request:Request, *args, **kwargs):
         user, resp = UserModelUtils.register_new_user(data=request.data)
 
-        return Response(
-            {
-                "error": resp.error,
-                "message": resp.message,
-                "data": resp.data
-            },
-            status=resp.status_code
-        )
+        return resp.to_response()
 
 class UserPasswordLoginAPI(APIView):
 
@@ -34,11 +27,4 @@ class UserPasswordLoginAPI(APIView):
 
         resp = UserModelUtils.login_via_password(username=username, email=email, password=password)
 
-        return Response(
-            {
-                "error": resp.error,
-                "message": resp.message,
-                "data": resp.data
-            },
-            status=resp.status_code
-        )
+        return resp.to_response()

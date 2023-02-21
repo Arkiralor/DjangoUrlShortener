@@ -82,8 +82,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
@@ -93,8 +93,8 @@ SIMPLE_JWT = {
 }
 
 if ENV_TYPE == "dev":
-    SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"] = timedelta(hours=8)
-    SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"] = timedelta(days=30)
+    SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"] = timedelta(days=365)
+    SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"] = timedelta(days=365)
 
 ## Create directory for logs
 LOG_DIR = path.join(BASE_DIR.parent, 'logs')

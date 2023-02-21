@@ -169,7 +169,7 @@ class UserModelUtils:
             resp.status_code = status.HTTP_404_NOT_FOUND
             return resp
 
-        if user.blocked_until > timezone.now():
+        if user.blocked_until and user.blocked_until > timezone.now():
             resp.error = "Login Blocked"
             resp.message = f"The user is blocked from logging in until {user.blocked_until}."
             resp.status_code = status.HTTP_401_UNAUTHORIZED
