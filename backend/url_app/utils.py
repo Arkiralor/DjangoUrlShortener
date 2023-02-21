@@ -14,21 +14,37 @@ from url_app import logger
 
 class ShortenedURLUtils:
 
+    DEFAULT_EXPIRY: int = 360
+    BLANK: str = ""
+
     @classmethod
-    def create_short_url(cls, user: User = None, long_url: str = None):
+    def get_expiry(cls, expiry_mins:int=0) -> str:
+        if expiry_mins >= 0 or expiry_mins > 1440:
+            expiry_mins = cls.DEFAULT_EXPIRY
+
+        expiry = timezone.now() + timezone.timedelta(minutes=expiry_mins)
+        expiry = expiry.strftime('YYYY-MM-dd HH:mm:ss')
+
+        return expiry
+
+    @classmethod
+    def create_short_url(cls, user: User = None, long_url: str = None, expiry_mins:int=0)->Resp:
         resp = Resp()
 
-        if not user or not long_url:
+        if not user or not long_url or long_url == cls.BLANK:
             resp.error = "Invalid Parameters"
             resp.message = "Both UserList and LongUrl are required."
             resp.status_code = status.HTTP_400_BAD_REQUEST
 
-            logger.warn(f"{resp.message}")
+            logger.warn(resp.message)
             return resp
+        
+        expiry = cls.get_expiry(expiry_mins=expiry_mins)
 
         data = {
             "long_url": long_url,
-            "assigned_user": user.id
+            "assigned_user": user.id,
+            "expiry": expiry
         }
 
         deserialized = ShortenedUrlSerializer(data=data)
@@ -77,6 +93,8 @@ class ShortenedURLUtils:
                 "shortUrl": short_url
             }
             resp.status_code = status.HTTP_403_FORBIDDEN
+
+            url_obj.delete()
             return resp
 
         serialized = ShortenedUrlSerializer(url_obj).data

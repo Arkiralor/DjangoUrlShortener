@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
@@ -35,12 +36,24 @@ class CreateShortUrlAPI(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request: Request, *args, **kwargs):
+        resp = Resp()
+
         user = request.user
         data = request.data
         long_url = data.get("long_url", "")
+        try:
+            expiry_mins = int(data.get("expiry_mins", 360))
+        except Exception as ex:
+            resp.error = "Invalid Data"
+            resp.message = f"{ex}"
+            resp.data = data
+            resp.status_code = status.HTTP_400_BAD_REQUEST
+
+            logger.warn(f"{resp.message} | User: {user.email}")
+            return resp.to_response()
 
         resp = ShortenedURLUtils.create_short_url(
-            user=user, long_url=long_url)
+            user=user, long_url=long_url, expiry_mins=expiry_mins)
 
         return resp.to_response()
 
