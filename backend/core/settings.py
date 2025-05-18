@@ -16,6 +16,8 @@ DEBUG = eval(environ['DEBUG'])
 
 ALLOWED_HOSTS = environ['ALLOWED_HOSTS'].split(', ')
 
+BASE_URL = environ["BASE_URL"]
+
 
 # Application definition
 

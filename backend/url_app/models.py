@@ -5,6 +5,8 @@ from django.utils import timezone
 from core.boilerplate.template_models import TemplateModel
 from user_app.models import User
 
+from url_app import logger, URL_PREFIX
+
 class ShortenedURL(TemplateModel):
     long_url = models.TextField()
     short_url = models.TextField(blank=True, null=True)
@@ -17,9 +19,15 @@ class ShortenedURL(TemplateModel):
     def save(self, *args, **kwargs):
         if not self.expiry:
             self.expiry = timezone.now() + timezone.timedelta(minutes=360)
+
+        self.add_protocol
         
-        self.short_url = f"{environ.get('APP_NAME')}/{self.id}"
+        self.short_url = f"{environ.get('BASE_URL')}/{URL_PREFIX}/{self.id}"
         super(ShortenedURL, self).save(*args, **kwargs)
+
+    def add_protocol(self):
+        if not self.long_url.startswith(('http://', 'https://')):
+            self.long_url = f"http://{self.long_url}"
 
     class Meta:
         verbose_name = "Shortened URL"

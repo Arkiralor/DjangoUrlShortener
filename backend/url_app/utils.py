@@ -22,8 +22,8 @@ class ShortenedURLUtils:
         if expiry_mins <= 0 or expiry_mins > 1440:
             expiry_mins = cls.DEFAULT_EXPIRY
 
-        expiry = timezone.now() + timezone.timedelta(minutes=expiry_mins)
-        expiry = expiry.strftime('YYYY-MM-dd HH:mm:ss')
+        expiry = timezone.localtime(timezone.now()) + timezone.timedelta(minutes=expiry_mins)
+        expiry = expiry.strftime("%Y-%m-%d %H:%M:%S")
 
         return expiry
 
@@ -88,7 +88,7 @@ class ShortenedURLUtils:
 
         if url_obj.expiry <= timezone.now():
             resp.error = "Link Expired"
-            resp.message = f"The shortlink: {url_obj.short_url} expired at {url_obj.expiry.strftime('YYYY-MM-dd HH:mm:ss')}."
+            resp.message = f"The shortlink: {url_obj.short_url} expired at {url_obj.expiry.strftime('%Y-%m-%d %H:%M:%S')}."
             resp.data = {
                 "shortUrl": short_url
             }

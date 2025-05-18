@@ -5,3 +5,5 @@ import logging
 
 logger = logging.getLogger('logger.' + __name__)
 default_app_config = 'url_app.apps.UrlAppConfig'
+
+URL_PREFIX = 'short'

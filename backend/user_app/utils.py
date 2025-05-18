@@ -199,11 +199,14 @@ class UserModelUtils:
             user.save()
 
         tokens = JWTUtils.get_tokens_for_user(user=user)
+        user.last_login = timezone.localtime(timezone.now())
+        user.save()
+
         resp.message = f"User {user.email} logged in successfully."
         resp.data = {
             "user": user.id,
             "tokens": tokens,
-            "login": timezone.localtime(timezone.now()).strftime("%Y-%m-%d %H:%M:%S")
+            "login": user.last_login.strftime("%Y-%m-%d %H:%M:%S")
         }
         resp.status_code=status.HTTP_200_OK
 
