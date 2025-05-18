@@ -147,7 +147,7 @@ class UserModelUtils:
         resp = Resp()
         user:User = None
 
-        if not username and email:
+        if not username and not email:
             resp.error = "Invalid Request"
             resp.message = "Either username or email are required."
             resp.status_code = status.HTTP_400_BAD_REQUEST
@@ -203,7 +203,7 @@ class UserModelUtils:
         resp.data = {
             "user": user.id,
             "tokens": tokens,
-            "login": timezone.now().strftime("YYYY-MM-dd HH:mm:ss")
+            "login": timezone.localtime(timezone.now()).strftime("%Y-%m-%d %H:%M:%S")
         }
         resp.status_code=status.HTTP_200_OK
 

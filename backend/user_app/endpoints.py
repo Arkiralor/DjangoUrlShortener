@@ -6,5 +6,5 @@ URL_PREFIX = 'api/user/'
 
 urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register-new-user'),
-    path('login/v1/', UserPasswordLoginAPI.as_view(), name='user-password-login')
+    path('login/', UserPasswordLoginAPI.as_view(), name='user-password-login')
 ]

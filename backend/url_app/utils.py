@@ -19,7 +19,7 @@ class ShortenedURLUtils:
 
     @classmethod
     def get_expiry(cls, expiry_mins:int=0) -> str:
-        if expiry_mins >= 0 or expiry_mins > 1440:
+        if expiry_mins <= 0 or expiry_mins > 1440:
             expiry_mins = cls.DEFAULT_EXPIRY
 
         expiry = timezone.now() + timezone.timedelta(minutes=expiry_mins)
@@ -36,7 +36,7 @@ class ShortenedURLUtils:
             resp.message = "Both UserList and LongUrl are required."
             resp.status_code = status.HTTP_400_BAD_REQUEST
 
-            logger.warn(resp.message)
+            logger.warning(resp.message)
             return resp
         
         expiry = cls.get_expiry(expiry_mins=expiry_mins)

@@ -14,7 +14,6 @@ SECRET_KEY = environ['SECRET_KEY']
 
 DEBUG = eval(environ['DEBUG'])
 
-
 ALLOWED_HOSTS = environ['ALLOWED_HOSTS'].split(', ')
 
 
@@ -159,8 +158,6 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user_app.User'
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ORIGIN_WHITELIST = environ.get('CORS_ORIGIN_WHITELIST', '').split(', ')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = environ['EMAIL_HOST']
@@ -180,4 +177,11 @@ GRAPH_MODELS = {
     "group_models": True
 }
 
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ORIGIN_WHITELIST = environ.get('CORS_ORIGIN_WHITELIST', '').split(', ')
+
 DEFAULT_PASSWORD = environ.get("DEFAULT_PASSWORD", "Password123")
+

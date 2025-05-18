@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from url_app.apis import GetShortUrlAPI, CreateShortUrlAPI, GetAllURLsAPI
 
-URL_PREFIX = '/'
+URL_PREFIX = 'short/'
 
 urlpatterns = [
     path('create/', CreateShortUrlAPI.as_view(), name='create-short'),
