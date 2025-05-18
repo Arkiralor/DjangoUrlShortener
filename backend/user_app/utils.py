@@ -78,6 +78,8 @@ class UserModelUtils:
             resp.data = data
             resp.message = f"A user with the given credentials (username | email | phone) already exists."
             resp.status_code = status.HTTP_400_BAD_REQUEST
+
+            logger.warning(resp.to_text())
             return None, Resp
 
         
@@ -87,6 +89,8 @@ class UserModelUtils:
             resp.data = data
             resp.message = "Password MUST contain 1 UPPERCASE character, 1 lowercase character, 1 special character and 1 numerical character."
             resp.status_code = status.HTTP_400_BAD_REQUEST
+
+            logger.warning(resp.to_text())
             return None, resp
         data['password'] = make_password(data.get('password'))
 
@@ -107,7 +111,7 @@ class UserModelUtils:
             resp.message = f"{deserialized.errors}"
             resp.status_code = status.HTTP_400_BAD_REQUEST
 
-            logger.warn(resp.message)
+            logger.warning(resp.to_text())
 
             return None, resp
 
@@ -116,6 +120,7 @@ class UserModelUtils:
         resp.message = f"User {deserialized.instance.username} registered succesfully."
         resp.status_code = status.HTTP_201_CREATED
 
+        logger.info(resp.to_text())
         return deserialized.instance, resp
 
     @classmethod
@@ -126,6 +131,8 @@ class UserModelUtils:
             logger.warn("User Instance Required.")
             resp.error = "User Instance Required."
             resp.message = f"Attempt to block user due to too many failed login attempts failed."
+
+            logger.warning(resp.to_text())
             return resp
 
         user.unsuccessful_login_attempts = 0
@@ -139,6 +146,8 @@ class UserModelUtils:
             "blockedUntil": user.blocked_until.strftime("YYYY-MM-dd HH:mm:ss")
         }
         resp.status_code = status.HTTP_401_UNAUTHORIZED
+
+        logger.warning(resp.to_text())
         return resp
 
 
@@ -151,6 +160,8 @@ class UserModelUtils:
             resp.error = "Invalid Request"
             resp.message = "Either username or email are required."
             resp.status_code = status.HTTP_400_BAD_REQUEST
+
+            logger.warning(resp.to_text())
             return resp
 
         if username and not email:
@@ -161,18 +172,24 @@ class UserModelUtils:
             resp.error = "Invalid Request"
             resp.message = "Send either the USERNAME or the EMAIL, not both."
             resp.status_code = status.HTTP_300_MULTIPLE_CHOICES
+
+            logger.warning(resp.to_text())
             return resp
 
         if not user:
             resp.error = "User not found."
             resp.message = "User not found for the given credentials, please check again."
             resp.status_code = status.HTTP_404_NOT_FOUND
+
+            logger.warning(resp.to_text())
             return resp
 
         if user.blocked_until and user.blocked_until > timezone.now():
             resp.error = "Login Blocked"
             resp.message = f"The user is blocked from logging in until {user.blocked_until}."
             resp.status_code = status.HTTP_401_UNAUTHORIZED
+
+            logger.warning(resp.to_text())
             return resp
 
         if not check_password(password=password, encoded=user.password):
@@ -192,6 +209,8 @@ class UserModelUtils:
                 "attemptsLeft": settings.OTP_ATTEMPT_LIMIT - user.unsuccessful_login_attempts
             }
             resp.status_code = status.HTTP_403_FORBIDDEN
+
+            logger.warning(resp.to_text())
             return resp
 
         if user.unsuccessful_login_attempts != 0:
@@ -211,7 +230,6 @@ class UserModelUtils:
         resp.status_code=status.HTTP_200_OK
 
         logger.info(f"User {user.email} logged in at {resp.data.get('login')} via password.")
-
         return resp
 
     @classmethod
@@ -226,6 +244,8 @@ class UserModelUtils:
                 "isd": isd
             }
             resp.status_code = status.HTTP_400_BAD_REQUEST
+
+            logger.warning(resp.to_text())
             return resp
 
         pass

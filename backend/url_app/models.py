@@ -12,6 +12,7 @@ class ShortenedURL(TemplateModel):
     short_url = models.TextField(blank=True, null=True)
     assigned_user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     expiry = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.id}"
@@ -20,14 +21,18 @@ class ShortenedURL(TemplateModel):
         if not self.expiry:
             self.expiry = timezone.now() + timezone.timedelta(minutes=360)
 
-        self.add_protocol
+        self.add_protocol()
         
         self.short_url = f"{environ.get('BASE_URL')}/{URL_PREFIX}/{self.id}"
         super(ShortenedURL, self).save(*args, **kwargs)
 
     def add_protocol(self):
         if not self.long_url.startswith(('http://', 'https://')):
-            self.long_url = f"http://{self.long_url}"
+            self.long_url = f"https://{self.long_url}"
+
+    def inactivate(self):
+        self.is_active = False
+        self.save()
 
     class Meta:
         verbose_name = "Shortened URL"

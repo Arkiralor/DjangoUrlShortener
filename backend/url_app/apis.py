@@ -24,7 +24,7 @@ class GetAllURLsAPI(APIView):
             resp.message = f"{ex}"
             resp.status_code = 400
 
-            logger.warn(resp.message)
+            logger.warning(resp.to_text())
             return resp.to_response()
 
         resp = ShortenedURLUtils.get_all_urls(page=page, user=request.user)
@@ -49,7 +49,7 @@ class CreateShortUrlAPI(APIView):
             resp.data = data
             resp.status_code = status.HTTP_400_BAD_REQUEST
 
-            logger.warn(f"{resp.message} | User: {user.email}")
+            logger.warning(f"{resp.to_text()} | User: {user.email}")
             return resp.to_response()
 
         resp = ShortenedURLUtils.create_short_url(

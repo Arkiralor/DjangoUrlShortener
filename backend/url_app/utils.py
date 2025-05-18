@@ -19,7 +19,10 @@ class ShortenedURLUtils:
 
     @classmethod
     def get_expiry(cls, expiry_mins:int=0) -> str:
-        if expiry_mins <= 0 or expiry_mins > 1440:
+        # if expiry_mins <= 0 or expiry_mins > 1440:
+        #     expiry_mins = cls.DEFAULT_EXPIRY
+
+        if not expiry_mins in range(0, 1441):
             expiry_mins = cls.DEFAULT_EXPIRY
 
         expiry = timezone.localtime(timezone.now()) + timezone.timedelta(minutes=expiry_mins)
@@ -36,7 +39,7 @@ class ShortenedURLUtils:
             resp.message = "Both UserList and LongUrl are required."
             resp.status_code = status.HTTP_400_BAD_REQUEST
 
-            logger.warning(resp.message)
+            logger.warning(resp.to_text())
             return resp
         
         expiry = cls.get_expiry(expiry_mins=expiry_mins)
@@ -54,7 +57,7 @@ class ShortenedURLUtils:
             resp.data = data
             resp.status_code = status.HTTP_400_BAD_REQUEST
 
-            logger.warn(resp.message)
+            logger.warning(resp.to_text())
 
             return resp
 
@@ -62,6 +65,8 @@ class ShortenedURLUtils:
         resp.message = "URL shortened successfully."
         resp.data = deserialized.data
         resp.status_code = status.HTTP_201_CREATED
+
+        logger.info(resp.to_text())
 
         return resp
 
@@ -73,7 +78,7 @@ class ShortenedURLUtils:
             resp.message = "Short URL is required."
             resp.status_code = status.HTTP_400_BAD_REQUEST
 
-            logger.warn(resp.message)
+            logger.warning(resp.to_text())
             return resp
 
         url_obj = ShortenedURL.objects.filter(pk=short_url).first()
@@ -84,9 +89,22 @@ class ShortenedURLUtils:
                 "shortUrl": short_url
             }
             resp.status_code = status.HTTP_404_NOT_FOUND
+
+            logger.warning(resp.to_text())
+            return resp
+        
+        if not url_obj.is_active:
+            resp.error = "Link Inactive"
+            resp.message = f"The shortlink: {url_obj.short_url} is inactive."
+            resp.data = {
+                "shortUrl": short_url
+            }
+            resp.status_code = status.HTTP_401_UNAUTHORIZED
+
+            logger.warning(resp.to_text())
             return resp
 
-        if url_obj.expiry <= timezone.now():
+        if url_obj.expiry <= timezone.localtime(timezone.now()):
             resp.error = "Link Expired"
             resp.message = f"The shortlink: {url_obj.short_url} expired at {url_obj.expiry.strftime('%Y-%m-%d %H:%M:%S')}."
             resp.data = {
@@ -94,15 +112,17 @@ class ShortenedURLUtils:
             }
             resp.status_code = status.HTTP_403_FORBIDDEN
 
-            url_obj.delete()
+            logger.warning(resp.to_text())
+            url_obj.inactivate()
             return resp
 
         serialized = ShortenedUrlSerializer(url_obj).data
 
-        resp.message = "Url retrieved successfully."
+        resp.message = f"URL \'{url_obj.long_url}\' retrieved successfully."
         resp.data = serialized
         resp.status_code = status.HTTP_200_OK
 
+        logger.info(resp.to_text())
         return resp
 
     @classmethod
@@ -113,13 +133,15 @@ class ShortenedURLUtils:
             resp.error = "Permission Denied"
             resp.message = "Only admins are allowed to access this data."
             resp.status_code = status.HTTP_401_UNAUTHORIZED
+
+            logger.warning(resp.to_text())
             return resp
 
         objs = ShortenedURL.objects.all()
 
         ## Of course we paginate this, I have no intention to blow up the instance with a virtual torrent of data.
         paginator = Paginator(objs, per_page=settings.ITEMS_PER_PAGE)
-        objs = paginator.get(page)
+        objs = paginator.get_page(page)
 
         serialized = ShortenedUrlSerializer(objs, many=True).data
 
@@ -132,6 +154,8 @@ class ShortenedURLUtils:
         resp.data = data
         resp.message = f"Items in page #{page} retrieved successfully."
         resp.status_code = status.HTTP_200_OK
+
+        logger.info(resp.to_text())
 
         return resp
         
